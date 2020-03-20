@@ -156,6 +156,13 @@ def mine():
     # Run the proof of work algorithm to get the next proof
     block = blockchain.last_block
     data = request.get_json()
+    required = ['proof', 'id']
+    if not all(k in data for k in required):
+        responce = {
+            'message': 'Missing values'
+        }
+        return jsonify(responce), 400
+
     proof = data['proof']
     block_string = json.dumps(block, sort_keys=True)
     if blockchain.valid_proof(block_string, proof):
@@ -170,7 +177,6 @@ def mine():
             'proof': new_block['proof'],
             'previous_hash': new_block['previous_hash']
         }
-
         return jsonify(response), 200
     else:
         responce = {
